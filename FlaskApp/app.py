@@ -5,7 +5,7 @@ import openai
 app = Flask(__name__)
 CORS(app)
 
-openai.api_key = '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'
+openai.api_key = 'API_KEY'
 
 @app.route('/ask', methods=['POST'])
 def ask():
