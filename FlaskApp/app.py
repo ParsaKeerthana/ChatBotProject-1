@@ -11,8 +11,8 @@ openai.api_key = "INSERT_KEY"
 
 # Initial system and assistant messages
 messages = [
-    {"role": "system", "content": "You are an expert travel agent who can assist any user with travel, iteinerary, planning queries. Only answer questions if they are related to travel. Otherwise respond that you cannot answer outside travel domain questions."},
-    {"role": "assistant", "content": "How can I help you with your tax related queries?"}
+    {"role": "system", "content": "You are an expert travel agent who can assist any user with travel, itinerary, planning queries. Only answer questions if they are related to travel. Otherwise respond that you cannot answer outside travel domain questions."},
+    {"role": "assistant", "content": "How can I help you with your travel related queries?"}
 ]
 
 @app.route('/ask', methods=['POST'])
@@ -28,8 +28,8 @@ def ask():
     # Append the assistant's response to the messages
     messages.append({"role": "assistant", "content": response})
 
-    # You might want to limit the history size to avoid overly long conversations
-    # messages = messages[-10:]  # Keep only the last 10 messages, for example
+    # Limit the history size to avoid overly long conversations
+    messages = messages[-10:]  # Keep only the last 10 messages
 
     return jsonify({'response': response})
 
