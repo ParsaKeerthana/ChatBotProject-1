@@ -17,6 +17,7 @@ messages = [
 
 @app.route('/ask', methods=['POST'])
 def ask():
+    global messages  # Declare 'messages' as a global variable
     user_question = request.json.get('question')
 
     # Append the user's question to the messages
@@ -32,6 +33,7 @@ def ask():
     messages = messages[-10:]  # Keep only the last 10 messages
 
     return jsonify({'response': response})
+
 
 def get_assistant_response(messages):
     r = openai.ChatCompletion.create(
