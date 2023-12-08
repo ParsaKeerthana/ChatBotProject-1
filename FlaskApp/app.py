@@ -1,29 +1,45 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+import os
 import openai
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-openai.api_key = 'API_KEY'
+# Setting the API key
+openai.api_key = "INSERT_KEY"
+
+# Initial system and assistant messages
+messages = [
+    {"role": "system", "content": "You are an expert travel agent who can assist any user with travel, iteinerary, planning queries. Only answer questions if they are related to travel. Otherwise respond that you cannot answer outside travel domain questions."},
+    {"role": "assistant", "content": "How can I help you with your tax related queries?"}
+]
 
 @app.route('/ask', methods=['POST'])
 def ask():
-    question = request.json.get('question')
-    print("Received question:", question)  # Log the received question
+    user_question = request.json.get('question')
 
-    try:
-        response = openai.Completion.create(
-            model="text-davinci-003",  # Replace with the model you intend to use
-            prompt=question,
-            max_tokens=150  # Adjust as necessary
-        )
-        answer = response.choices[0].text.strip()
-        print("OpenAI response:", answer)  # Log the OpenAI response
-        return jsonify({'response': answer})
-    except Exception as e:
-        print("Error in OpenAI API call:", e)  # Log any errors
-        return jsonify({'response': 'Error in processing the request'}), 500
+    # Append the user's question to the messages
+    messages.append({"role": "user", "content": user_question})
+
+    # Get the assistant's response
+    response = get_assistant_response(messages)
+
+    # Append the assistant's response to the messages
+    messages.append({"role": "assistant", "content": response})
+
+    # You might want to limit the history size to avoid overly long conversations
+    # messages = messages[-10:]  # Keep only the last 10 messages, for example
+
+    return jsonify({'response': response})
+
+def get_assistant_response(messages):
+    r = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": m["role"], "content": m["content"]} for m in messages],
+    )
+    response = r.choices[0].message.content
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
