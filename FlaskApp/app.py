@@ -30,7 +30,7 @@ def ask():
     messages.append({"role": "assistant", "content": response})
 
     # Limit the history size to avoid overly long conversations
-    messages = messages[-10:]  # Keep only the last 10 messages
+    messages = messages[-6:]  # Keep only the last 6 messages
 
     return jsonify({'response': response})
 
